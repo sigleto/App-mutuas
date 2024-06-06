@@ -15,7 +15,7 @@ const Aviso = ({ visible, onConfirm, onCancel }) => {
             <Text style={styles.rojo}>¡¡ATENCIÓN !!</Text>
           </Text>
           <Text style={styles.modalText}>
-            A continuación se calculará la devolución asumiendo que no existen más rendimientos significativos en el ejercicio que la pensión. No se tendrá en cuenta para dicho cálculo más circunstancias personales que los datos de edad y minusvalía aportados por el usuario. Tenga en cuenta que esto es tan sólo un cálculo aproximado.
+            A continuación se calculará la devolución asumiendo que el UNICO rendimiento significativo en el ejercicio es la pensión. No se tendrá en cuenta para dicho cálculo más circunstancias personales que los datos de edad y minusvalía aportados por el usuario. Tenga en cuenta que esto es tan sólo un cálculo aproximado.
           </Text>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={onConfirm}>

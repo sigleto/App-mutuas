@@ -1,23 +1,34 @@
 import React from "react";
-import { View, Text, StyleSheet, Linking, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { SharedElement } from "react-navigation-shared-element";
-
 
 const DescargoResponsabilidad = () => {
   const navegacion = useNavigation();
 
-  const salto = () => { navegacion.goBack() }
+  const salto = () => {
+    navegacion.navigate('Main');
+  };
 
   return (
     <ScrollView style={styles.container}>
       <SharedElement id="elementId">
         <Text style={styles.titulo}>Aviso de Descargo de Responsabilidad:</Text>
         <Text style={styles.parrafo}>
-          {"Esta aplicación tiene como objetivo facilitar la gestión de citas previas con diversas entidades, tanto públicas como privadas. Queremos destacar que no somos una entidad pública ni estamos afiliados a ninguna. Somos un servicio independiente que recopila información de fuentes públicas para proporcionar una interfaz conveniente para agendar citas.\n\n" +
-          "La información que ofrecemos se basa en la disponibilidad y políticas de las entidades correspondientes. No asumimos ninguna responsabilidad por cambios en los horarios, políticas o cualquier otro aspecto de las entidades para las cuales se realizan citas.\n\n" +
-          "Por favor, tenga en cuenta que esta aplicación no representa ni pretende representar a ninguna entidad pública. La información proporcionada debe ser verificada directamente con las entidades correspondientes para garantizar su autenticidad.\n\n" +
-          "Gracias por utilizar nuestra aplicación."}
+          {`Esta aplicación es una aplicación informativa y de cálculo no oficial.
+
+No representamos ni estamos afiliados a ninguna entidad gubernamental.
+
+La información proporcionada se basa en fuentes públicas y nuestra interpretación de las normativas vigentes.
+Fuentes de información:
+
+-  Sentencia 707/2023 de 28 de febrero del Tribunas Supremo.
+-  Disposición Transitoria 2ª de la Ley 35/2006 de 28 de    noviembre, del Impuesto sobre la Renta de las Personas Físicas
+
+Bajo ninguna circunstancia, los desarrolladores de esta aplicación se responsabilizan de las consecuencias derivadas del uso de la misma.
+
+Por favor, verifique toda la información con las entidades gubernamentales correspondientes.
+Gracias por utilizar nuestra aplicación.`}
         </Text>
       </SharedElement>
       <View style={styles.buttonContainer}>
@@ -39,7 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
-    marginTop:40,
+    marginTop: 40,
     color: '#007BFF', // Color del título
   },
   parrafo: {
@@ -52,7 +63,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 20,
     alignItems: 'center',
-    marginBottom:60,
+    marginBottom: 60,
   },
   skipButton: {
     backgroundColor: '#007BFF', // Color del botón
@@ -65,4 +76,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default DescargoResponsabilidad;
+
+export default DescargoResponsabilidad

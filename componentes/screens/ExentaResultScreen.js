@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, Alert } from 'react-native';
 import ResultDisplay from '../ResultDisplay';
+
+//import Anuncio from '../Avisos/Anuncio';
 
 export default function ExentaResultScreen({ route, navigation }) {
   const { importe, fechaInicioLaboral, fechaJubilacion, dias, suspension1, suspension2 } = route.params;
   const [parteExenta, setParteExenta] = useState('');
+  const [isNegativeResult, setIsNegativeResult] = useState(false);
+ 
 
   useEffect(() => {
     const calcularParteExenta = () => {
@@ -17,7 +21,7 @@ export default function ExentaResultScreen({ route, navigation }) {
 
       if (isNaN(importeValue) || isNaN(fechaInicioT.getTime())) {
         Alert.alert('Por favor, asegúrate de que todos los campos estén llenos.');
-        return;
+        navigation.navigate('Main');
       }
 
       let diferenciaDiasTotal;
@@ -49,9 +53,15 @@ export default function ExentaResultScreen({ route, navigation }) {
       parteEntre1967y1978 = importeValue * ((diferenciaDias2 - suspension2Value) / totalDias) * 0.25;
 
       const parteExentaTotal = parteHasta1966 + parteEntre1967y1978;
-      const cantidadExenta = parteExentaTotal.toFixed(2);
 
-      setParteExenta(`En función de los datos aportados, la parte exenta de la pensión para este ejercicio es de ${cantidadExenta} euros`);
+      if (parteExentaTotal < 0) {
+        setParteExenta('El resultado es incongruente. Por favor, revise los datos introducidos.');
+        setIsNegativeResult(true);
+      } else {
+        const cantidadExenta = parteExentaTotal.toFixed(2);
+        setParteExenta(`En función de los datos aportados por el usuario, la parte exenta de la pensión para este ejercicio es de ${cantidadExenta} euros`);
+        setIsNegativeResult(false);
+      }
     };
 
     calcularParteExenta();
@@ -61,19 +71,29 @@ export default function ExentaResultScreen({ route, navigation }) {
     navigation.navigate('DevolucionResultScreen', { importe, parteExenta });
   };
 
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
       <ResultDisplay result={parteExenta} />
-      <Button title="SIGUIENTE" onPress={handleNext} />
+      {isNegativeResult ? (
+        <Button title="VOLVER" onPress={handleBack} />
+      ) : (
+        <Button title="SIGUIENTE" onPress={handleNext} />
+      )}
     </View>
   );
 }
-
+{/*<Anuncio/>*/}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#fffdf1'
   },
 });
+

@@ -5,6 +5,7 @@ import DateInput from '../FechaInput';
 import AvisoVida from '../Avisos/AvisoVida';
 import AvisoDiasCotizados from '../Avisos/AvisoDiasCotizados';
 import { useNavigation } from '@react-navigation/native';
+//import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 export default function MainScreen({ navigation }) {
   const [importe, setImporte] = useState('');
@@ -15,16 +16,24 @@ export default function MainScreen({ navigation }) {
   const [suspension2, setSuspension2] = useState('');
   const [showAvisoVida, setShowAvisoVida] = useState(false);
   const [showAvisoDias, setShowAvisoDias] = useState(false);
-
+  //const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-6921150380725872/8959961143';
   const handleCalcularExenta = () => {
+    // Reemplazar comas por puntos en el importe
+    const importeConPunto = importe.replace(',', '.');
     navigation.navigate('ExentaResult', {
-      importe,
+      importe: importeConPunto,
       fechaInicioLaboral,
       fechaJubilacion,
       dias,
       suspension1,
       suspension2,
     });
+  };
+
+  const handleImporteChange = (text) => {
+    // Reemplazar comas por puntos en tiempo real
+    const textConPunto = text.replace(',', '.');
+    setImporte(textConPunto);
   };
 
   const nav = useNavigation();
@@ -37,7 +46,12 @@ export default function MainScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.formContainer}>
-        <InputField label="IMPORTE DE LA PENSIÓN" value={importe} onChangeText={setImporte} keyboardType='numeric' />
+        <InputField
+          label="IMPORTE ANUAL DE LA PENSIÓN "
+          value={importe}
+          onChangeText={handleImporteChange}
+          keyboardType='numeric'
+        />
         <DateInput label="FECHA INICIO VIDA LABORAL" value={fechaInicioLaboral} onChangeText={setFechaInicioLaboral} />
         <DateInput label="FECHA DE JUBILACION" value={fechaJubilacion} onChangeText={setFechaJubilacion} />
         <View style={styles.inputContainer}>
@@ -70,6 +84,10 @@ export default function MainScreen({ navigation }) {
           onCancel={() => setShowAvisoDias(false)}
         />
       </View>
+      {/*<BannerAd
+      unitId={adUnitId}
+      size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+  />*/}
     </ScrollView>
   );
 }
@@ -77,7 +95,7 @@ export default function MainScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fffdf1',
     flexGrow: 1,
   },
   header: {
@@ -89,7 +107,7 @@ const styles = StyleSheet.create({
   menuIcon: {
     fontSize: 25,
     marginRight: 10,
-    marginTop:30,
+    marginTop: 30,
   },
   formContainer: {
     marginTop: 50,

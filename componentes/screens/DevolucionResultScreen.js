@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Button, TextInput, StyleSheet, Alert,Text,Linking,TouchableOpacity} from 'react-native';
+import { View, Button, TextInput, StyleSheet, Alert, Text, Linking, TouchableOpacity } from 'react-native';
 import ResultDisplay from '../ResultDisplay';
 import Aviso from '../Avisos/Aviso';
-
+import { useNavigation } from '@react-navigation/native';
+//import Anuncio from '../Avisos/Anuncio';
 
 export default function DevolucionResultScreen({ route }) {
   const { importe, parteExenta } = route.params;
@@ -10,12 +11,10 @@ export default function DevolucionResultScreen({ route }) {
   const [minusvalia, setMinusvalia] = useState('0');
   const [devolucion, setDevolucion] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  
 
-  
+  const navigation = useNavigation();
 
   const calcularDevolucion = () => {
-    // Extraer el valor numérico de parteExenta
     const parteExentaValue = parseFloat(parteExenta.match(/(\d+(\.\d+)?)/)[0]);
 
     if (isNaN(parteExentaValue)) {
@@ -23,37 +22,42 @@ export default function DevolucionResultScreen({ route }) {
       return;
     }
 
-    let pensionConsiderada = parseFloat(importe) - 2000 - parteExentaValue;
+    let pensionConsiderada = parseFloat(importe) - 2000;
+    let pensionConExenta = pensionConsiderada - parteExentaValue;
 
-    if (isNaN(pensionConsiderada) || pensionConsiderada <= 0) {
+    if (isNaN(pensionConsiderada) || pensionConsiderada <= 0 || isNaN(pensionConExenta) || pensionConExenta <= 0) {
       Alert.alert('Error', 'El valor de la pensión considerada no es válido');
       return;
     }
 
-    let impuestoTotal = 0;
-    let ingresoTotal = pensionConsiderada;
+    const calcularImpuesto = (ingreso) => {
+      let impuestoTotal = 0;
+      const escalasGravamen = [
+        { limiteInf: 0, limiteSup: 12450, tipo: 19 },
+        { limiteInf: 12450, limiteSup: 20200, tipo: 24 },
+        { limiteInf: 20200, limiteSup: 35200, tipo: 30 },
+        { limiteInf: 35200, limiteSup: 60000, tipo: 37 },
+        { limiteInf: 60000, limiteSup: Infinity, tipo: 45 },
+      ];
 
-    const escalasGravamen = [
-      { limiteInf: 0, limiteSup: 12450, tipo: 19 },
-      { limiteInf: 12450, limiteSup: 20200, tipo: 24 },
-      { limiteInf: 20200, limiteSup: 35200, tipo: 30 },
-      { limiteInf: 35200, limiteSup: 60000, tipo: 37 },
-      { limiteInf: 60000, limiteSup: Infinity, tipo: 45 },
-    ];
+      for (let escala of escalasGravamen) {
+        const tramoInferior = escala.limiteInf;
+        const tramoSuperior = escala.limiteSup;
+        const tipo = escala.tipo;
 
-    for (let escala of escalasGravamen) {
-      const tramoInferior = escala.limiteInf;
-      const tramoSuperior = escala.limiteSup;
-      const tipo = escala.tipo;
+        if (ingreso <= 0) break;
 
-      if (ingresoTotal <= 0) break;
+        let ingresosEnTramo = Math.min(ingreso, tramoSuperior - tramoInferior);
+        let impuestoEnTramo = ingresosEnTramo * (tipo / 100);
 
-      let ingresosEnTramo = Math.min(ingresoTotal, tramoSuperior - tramoInferior);
-      let impuestoEnTramo = ingresosEnTramo * (tipo / 100);
+        impuestoTotal += impuestoEnTramo;
+        ingreso -= ingresosEnTramo;
+      }
+      return impuestoTotal;
+    };
 
-      impuestoTotal += impuestoEnTramo;
-      ingresoTotal -= ingresosEnTramo;
-    }
+    const impuestoTotal = calcularImpuesto(pensionConsiderada);
+    const impuestoConExenta = calcularImpuesto(pensionConExenta);
 
     let cuotaDelMinimo = 0;
     const edadValue = parseInt(edad);
@@ -74,13 +78,15 @@ export default function DevolucionResultScreen({ route }) {
     else if (edadValue < 65 && minusvaliaValue >= 65) { cuotaDelMinimo = 3500; }
     else { cuotaDelMinimo = 1077; }
 
-    if (impuestoTotal - cuotaDelMinimo > 0) { impuestoTotal -= cuotaDelMinimo; }
-    let tipoGravamenEfectivo = (impuestoTotal / pensionConsiderada) * 100;
+    let impuestoFinal = impuestoTotal - cuotaDelMinimo > 0 ? impuestoTotal - cuotaDelMinimo : 0;
+    let impuestoConExentaFinal = impuestoConExenta - cuotaDelMinimo > 0 ? impuestoConExenta - cuotaDelMinimo : 0;
 
-    const tipoGravamenUno = tipoGravamenEfectivo;
-    const tipoGravamenDos = ((impuestoTotal + parteExentaValue * (tipoGravamenUno / 100)) / pensionConsiderada) * 100;
-    let devolucionT=parseFloat((parseFloat(importe-2000))*(tipoGravamenDos/100)-pensionConsiderada*(tipoGravamenUno/100)).toFixed(2);
-    setDevolucion(`El tipo de gravamen inicial es del ${tipoGravamenDos.toFixed(2)}%. Restando la cantidad exenta de pensión, correspondería un tipo de gravamen del ${tipoGravamenUno.toFixed(2)}%.La devolución resultante sería aproximadamente de ${devolucionT}`);
+    const tipoGravamenUno = (impuestoFinal / pensionConsiderada) * 100;
+    const tipoGravamenDos = (impuestoConExentaFinal / pensionConExenta) * 100;
+
+    const devolucionTotal = (pensionConsiderada * tipoGravamenUno / 100) - (pensionConExenta * tipoGravamenDos / 100);
+
+    setDevolucion(`El tipo de gravamen inicial es del ${tipoGravamenUno.toFixed(2)}%. Restando la cantidad exenta de pensión, correspondería un tipo de gravamen del ${tipoGravamenDos.toFixed(2)}%. La devolución resultante sería aproximadamente de ${devolucionTotal.toFixed(2)}.`);
   };
 
   const handleCalcular = () => {
@@ -95,17 +101,19 @@ export default function DevolucionResultScreen({ route }) {
   const handleCancel = () => {
     setModalVisible(false);
   };
- 
+
+  const volver = () => { navigation.navigate("Main") };
+
   return (
     <View style={styles.container}>
-     <Text style={styles.textos}>Edad en el ejercicio de comprobación</Text>
+     {/*<Anuncio/>*/}
+      <Text style={styles.textos}>Edad en el ejercicio de comprobación</Text>
       <TextInput
         style={styles.input}
         placeholder="Su edad en el ejercicio de cálculo"
         value={edad}
         onChangeText={setEdad}
         keyboardType="numeric"
-        
       />
       <Text style={styles.textos}>Grado de minusvalía</Text>
       <TextInput
@@ -115,18 +123,19 @@ export default function DevolucionResultScreen({ route }) {
         onChangeText={setMinusvalia}
         keyboardType="numeric"
       />
-       <Button title="CALCULAR DEVOLUCIÓN" onPress={handleCalcular} />
+      <Button title="CALCULAR DEVOLUCIÓN" onPress={handleCalcular} />
       {devolucion ? <ResultDisplay result={devolucion} /> : null}
-      <Aviso 
+      <Aviso
         visible={modalVisible}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
-       <Text style={styles.link} onPress={() => Linking.openURL('https://sede.agenciatributaria.gob.es/Sede/irpf/mutualistas-solicitudes-devolucion.html')}>
+      <TouchableOpacity onPress={volver}>
+        <Text style={styles.link}>VOLVER</Text>
+      </TouchableOpacity>
+      <Text style={styles.link} onPress={() => Linking.openURL('https://sede.agenciatributaria.gob.es/Sede/irpf/mutualistas-solicitudes-devolucion.html')}>
         Presentación de solicitud ante la AEAT
       </Text>
-      
-      
     </View>
   );
 }
@@ -136,7 +145,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    marginTop: 70,
+    backgroundColor: '#fffdf1',
   },
   input: {
     height: 40,
@@ -146,20 +156,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: '80%',
     paddingHorizontal: 10,
-    textAlign:'center'
+    textAlign: 'center',
   },
-  textos:{
-    fontWeight:'bold',
-    color:'green'
-
+  textos: {
+    fontWeight: 'bold',
+    color: 'green',
+    fontSize: 16,
   },
-  link:{
-    fontSize:18,
-    fontWeight:'bold',
-    marginBottom:10,
-    color:'blue',
-    textDecorationLine:'underline',
-    marginTop:40,
+  link: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'blue',
+    textDecorationLine: 'underline',
+    marginTop: 30,
   },
   touchableOpacity: {
     backgroundColor: 'olive',
@@ -167,6 +177,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     marginTop: 20,
-    fontWeight:'bold',
+    fontWeight: 'bold',
   },
 });

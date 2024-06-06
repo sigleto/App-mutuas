@@ -18,6 +18,7 @@ const InputField = ({ label, value, onChangeText, keyboardType = 'default' }) =>
 const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 12,
+    
   },
   input: {
     height: 40,

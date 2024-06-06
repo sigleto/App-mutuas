@@ -19,7 +19,10 @@
         "foregroundImage": "./assets/icono.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sigleto.Mutuas"
+      "permissions": ["com.google.android.gms.permission.AD_ID"],
+      "package": "com.sigleto.Mutuas",
+      "versionCode": 2
+      
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,6 +31,10 @@
       "eas": {
         "projectId": "9e43d05b-314b-4400-b4ed-b8800d740ca7"
       }
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  
   }
 }

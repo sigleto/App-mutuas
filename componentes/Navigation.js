@@ -15,7 +15,8 @@ const Drawer = createDrawerNavigator();
 
 function MainStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator initialRouteName="DescargoResponsabilidad">
+      <Stack.Screen name="DescargoResponsabilidad" component={DescargoResponsabilidad} options={{ title: 'Descargo de Responsabilidad' }} />
       <Stack.Screen name="Main" component={MainScreen} options={{ title: 'Inicio', headerShown: false }}/>
       <Stack.Screen name="ExentaResult" component={ExentaResultScreen} options={{ title: 'Resultado Exenta', headerShown: false  }} />
       <Stack.Screen name="AdditionalInputs" component={AdditionalInputsScreen} options={{ title: 'Datos Adicionales', headerShown: false  }} />
@@ -37,4 +38,3 @@ export default function Navigator() {
     </NavigationContainer>
   );
 }
-

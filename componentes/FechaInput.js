@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, View, StyleSheet } from 'react-native';
 
-const DateInput = ({ label, value, onChangeText }) => {
+const DateInput = ({ label, value, onChangeText, style }) => {
   const [formattedDate, setFormattedDate] = useState(value);
 
   const handleChangeText = (text) => {
@@ -24,7 +24,7 @@ const DateInput = ({ label, value, onChangeText }) => {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, style]} // Aplica el estilo personalizado aquí
         placeholder={label}
         value={formattedDate}
         onChangeText={handleChangeText}
@@ -48,3 +48,4 @@ const styles = StyleSheet.create({
 });
 
 export default DateInput;
+

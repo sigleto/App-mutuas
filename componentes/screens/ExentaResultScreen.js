@@ -20,7 +20,7 @@ export default function ExentaResultScreen({ route, navigation }) {
       const diasValue = parseInt(dias);
 
       if (isNaN(importeValue) || isNaN(fechaInicioT.getTime())) {
-        Alert.alert('Por favor, asegúrate de que todos los campos estén llenos.');
+        Alert.alert('Por favor, asegúrate de rellenar todos los campos necesarios.');
         navigation.navigate('Main');
       }
 

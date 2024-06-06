@@ -16,17 +16,12 @@ const DescargoResponsabilidad = () => {
         <Text style={styles.titulo}>Aviso de Descargo de Responsabilidad:</Text>
         <Text style={styles.parrafo}>
           {`Esta aplicación es una aplicación informativa y de cálculo no oficial.
-
 No representamos ni estamos afiliados a ninguna entidad gubernamental.
-
 La información proporcionada se basa en fuentes públicas y nuestra interpretación de las normativas vigentes.
 Fuentes de información:
-
 -  Sentencia 707/2023 de 28 de febrero del Tribunas Supremo.
 -  Disposición Transitoria 2ª de la Ley 35/2006 de 28 de    noviembre, del Impuesto sobre la Renta de las Personas Físicas
-
 Bajo ninguna circunstancia, los desarrolladores de esta aplicación se responsabilizan de las consecuencias derivadas del uso de la misma.
-
 Por favor, verifique toda la información con las entidades gubernamentales correspondientes.
 Gracias por utilizar nuestra aplicación.`}
         </Text>

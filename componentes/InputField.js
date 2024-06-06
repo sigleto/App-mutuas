@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { TextInput, View, Text, StyleSheet } from 'react-native';
 
-const InputField = ({ label, value, onChangeText, keyboardType = 'default' }) => {
+const InputField = ({ label, value, onChangeText, style, keyboardType }) => {
   return (
-    <View style={styles.inputContainer}>
+    <View style={styles.container}>
       <Text>{label}</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, style]} // Aplica el estilo personalizado aquí
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
@@ -16,15 +16,14 @@ const InputField = ({ label, value, onChangeText, keyboardType = 'default' }) =>
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 12,
-    
+  container: {
+    marginBottom: 10,
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    padding: 10,
+    paddingHorizontal: 10,
   },
 });
 

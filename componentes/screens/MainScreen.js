@@ -51,11 +51,22 @@ export default function MainScreen({ navigation }) {
           value={importe}
           onChangeText={handleImporteChange}
           keyboardType='numeric'
+          style={styles.highlightedInput}
         />
-        <DateInput label="FECHA INICIO VIDA LABORAL" value={fechaInicioLaboral} onChangeText={setFechaInicioLaboral} />
-        <DateInput label="FECHA DE JUBILACION" value={fechaJubilacion} onChangeText={setFechaJubilacion} />
+        <DateInput 
+          label="FECHA INICIO VIDA LABORAL" 
+          value={fechaInicioLaboral} 
+          onChangeText={setFechaInicioLaboral} 
+          style={styles.highlightedInput}
+        />
+        <DateInput 
+          label="FECHA DE JUBILACION" 
+          value={fechaJubilacion} 
+          onChangeText={setFechaJubilacion} 
+          style={styles.highlightedInput}
+        />
         <View style={styles.inputContainer}>
-          <InputField label="DIAS DE COTIZACIÓN " value={dias} onChangeText={setDias} keyboardType='numeric' />
+          <InputField label="Dias de cotización " value={dias} onChangeText={setDias} keyboardType='numeric' />
           <TouchableOpacity onPress={() => setShowAvisoVida(true)}>
             <Text style={styles.asterisk}>?</Text>
           </TouchableOpacity>
@@ -128,5 +139,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#c4f8f9',
     borderRadius: 8,
+  },
+  highlightedInput: {
+    backgroundColor: '#eeffd1', // Color de fondo más fuerte
+    borderRadius: 5,
+    padding: 10,
   },
 });
